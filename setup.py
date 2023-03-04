@@ -4,7 +4,7 @@ import numpy as np
 import setuptools_scm  # noqa: F401 - to avoid version = 0.0.0 errors if built without setuptools_scm installed
 from setuptools import Extension, setup
 
-USE_CYTHON = os.getenv("USE_CYTHON") == "1"
+USE_CYTHON = True
 
 try:
     from Cython.Build import cythonize
