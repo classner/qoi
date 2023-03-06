@@ -1,8 +1,7 @@
 import os
-
-import numpy as np
 import setuptools_scm  # noqa: F401 - to avoid version = 0.0.0 errors if built without setuptools_scm installed
 from setuptools import Extension, setup
+from setuptools.command.build_ext import build_ext as _build_ext
 
 USE_CYTHON = True
 
@@ -13,7 +12,16 @@ except ImportError:
     if USE_CYTHON:
         raise RuntimeError("You've set USE_CYTHON=1 but don't have Cython installed!")
 
-
+# https://stackoverflow.com/questions/54117786/add-numpy-get-include-argument-to-setuptools-without-preinstalled-numpy
+class build_ext(_build_ext):
+    def finalize_options(self):
+        _build_ext.finalize_options(self)
+        # Prevent numpy from thinking it is still in its setup process:
+        __builtins__.__NUMPY_SETUP__ = False
+        import numpy
+        self.include_dirs.append(numpy.get_include())
+        
+        
 # https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html#distributing-cython-modules
 def no_cythonize(extensions, **_ignore):
     for extension in extensions:
@@ -61,5 +69,5 @@ setup(
     extras_require={
         "dev": dev_requires,
     },
-    include_dirs=[np.get_include()],
+    cmdclass={'build_ext': build_ext}
 )
