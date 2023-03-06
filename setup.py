@@ -1,5 +1,4 @@
 import os
-import setuptools_scm  # noqa: F401 - to avoid version = 0.0.0 errors if built without setuptools_scm installed
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext as _build_ext
 
